@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<charset = "utf-8" />	
+	</head>
+	<body>
+		<input type = "button" value = "myLove" id = "haha"/>
+		
+		<input type = "button" value = "handsome" />
+		
+		<input type = "button" value = "beautiful" />
+	
+		<script type="text/javascript" src = "base.js"></script>
+		<script type="text/javascript" src = "EventUtil.js"></script>
+		<script type="text/javascript">
+			
+
+/*		document.getElementById("haha").onclick = function(){
+			var event = EventUtil.getEvent(event);
+			var target = EventUtil.getTarget(event);
+			alert(target.value);
+		}
+*/
+			function ajax(url,dataArr){
+				if(window.XMLHttpRequest){
+					var xhr = new XMLHttpRequest();
+				}
+				else {
+					var xhr = new ActiveXObject("Microsoft.XMLHTTP");
+				}
+
+				xhr.onreadystatechange = function(){
+					/*if(xhr.readyState == 1){
+						alert("1");
+					}
+					if(xhr.readyState == 2){
+						alert("2");
+					}
+					if(xhr.readyState == 3){
+						alert("3");
+					}*/
+					if(xhr.readyState == 4){
+						switch(xhr.status){
+							case 200:successHandle(xhr.responseText);
+								break;	
+							case 404:
+							case 500:errorHandle();
+								break;
+						}
+					}
+				}
+
+				xhr.open("GET",url + "?" + dataArr,true);
+				xhr.send(null);
+			}
+			
+			function successHandle(msg){
+				alert(msg);
+			}
+
+			function errorHandle(){
+				alert("error!");
+			}
+
+			EventUtil.addHandler(document.body,"click",function(){
+				var event = EventUtil.getEvent(event);
+				var target = EventUtil.getTarget(event);
+				if(target.nodeName == "INPUT"){
+
+					var data = {value:target.value};
+					var dataStrArr = [];
+					for (key in data) {
+						dataStrArr.push(key + '=' + data[key]);
+					}
+					var dataStr = dataStrArr.join("&");
+
+					ajax("ajax.php",dataStr);//见鬼，非要这样才行
+/*					ajax("ajax.php",value = 'hebeTien');就不行
+*/					
+				}
+			});
+
+			
+			
+		</script>
+	</body>
+</html>
