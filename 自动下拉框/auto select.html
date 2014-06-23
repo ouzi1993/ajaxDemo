@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+	<head></head>
+	<body>
+		<select id = "provinceGroup">
+			<option>fujian</option>
+			<option>zhejiang</option>
+		</select>
+		<select id = "cityGroup"></select>
+		<div id = "context">
+			<p>code:</p><p id = "code"></p>
+			</br>
+			<p>list:</p><p id = "list"></p>
+		</div>
+		
+
+		<script type="text/javascript" src = "EventUtil.js"></script>
+		<script type="text/javascript">
+			var pg = G("provinceGroup");
+			var cg = G('cityGroup');
+
+			EventUtil.addHandler(pg,'change',function(){
+				var province = pg.options[pg.selectedIndex];
+				ajax(pg.value);
+			})
+
+			var xhr;
+			function createXHR(){
+				if(window.XMLHttpRequest){
+					xhr = new XMLHttpRequest();
+				}
+				else{
+					xhr = new ActiveXObject("Microsoft.XMLHTTP");
+				}
+			}
+
+			function ajax(msg){
+				createXHR();
+				xhr.onreadystatechange = function(){
+					if(xhr.readyState == 4){
+						if(xhr.status == 200){
+							successHandle(xhr.responseText);
+						}
+						else if(xhr.status == 404 || 500){
+							alert("error");
+						}
+					}
+					
+				}
+				xhr.open('GET',"select.php?province="+ msg);
+				xhr.send(null);
+			}
+
+			var obj = {
+				ID:[],
+				city:[],
+				code:[]
+			}
+
+			function successHandle(msg){
+				var data = JSON.parse(msg);
+				obj.city = [];
+				obj.code = [];
+				obj.ID = [];
+				for(var i in data){
+					obj.city.push(data[i]['city']);
+					obj.code.push(data[i]['code']);
+					obj.ID.push(data[i]['ID']);
+				}
+				var fragment = document.createDocumentFragment();
+				for(var i = 0;i<obj.city.length;i ++){
+					var node = new Option(obj.city[i]);
+					fragment.appendChild(node);
+				}
+				while(cg.hasChildNodes()){
+					cg.removeChild(cg.firstChild);
+				}
+				cg.appendChild(fragment);
+			}
+
+			EventUtil.addHandler(cg,'change',function(){
+				G("list").innerHTML = "";
+				G("code").innerHTML = "";
+				G("list").appendChild(T(parseInt(obj.ID[cg.selectedIndex])));
+				G('code').appendChild(T(parseInt(obj.code[cg.selectedIndex])));
+			})
+			var hdaleid = "";
+		</script>
+		
+		
+	</body>
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+	<head></head>
+	<body>
+		<button onclick = "getStates('north')">getNorthStates</button>
+		<button onclick = "getStates('all')">getAllStates</button>
+		<script type="text/javascript">
+			var xhr;
+			function createXHR(){
+				if(window.XMLHttpRequest){
+					xhr = new XMLHttpRequest();
+				}
+				else{
+					xhr = new ActiveXObject("Microsoft.XMLHTTP");
+				}
+			}
+
+			function getStates(states){
+				
+				createXHR();
+				xhr.onreadystatechange = function(){
+					if(xhr.readyState == 4){
+						switch(xhr.status){
+					        case 200:(function(){
+					                    if(states == "north"){
+					                            listNorthStates(xhr.responseXML);
+					                        }
+					                    if(states == "all"){
+					                        listAllStates(xhr.responseXML);
+					                    }
+					                })();
+					                break;
+					        case 404:
+					        case 500:
+					                alert("error");
+					                break;
+					    }
+					}
+				}
+				xhr.open("GET","states.xml",true);
+				xhr.send(null);
+			}
+			
+			function listNorthStates(xml){
+				var north = xml.getElementsByTagName('north')[0];
+				var states = north.getElementsByTagName('state');
+				outputlist("north states",states);
+			}
+
+			function listAllStates(xml){
+				var all = xml.getElementsByTagName('state');
+				outputlist("all states",all);
+			}
+
+			function outputlist(title,states){
+				var text = title;
+				for(var i = 0; i< states.length;i ++){
+					var state = states[i].firstChild.nodeValue;
+					text += "\n-" + state;
+				}
+				alert(text);
+			}
+		</script>
+		
+		
+	</body>
+</html>

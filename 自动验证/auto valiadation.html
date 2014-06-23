@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+	<head></head>
+	<body>
+		<label>Phone number</label>
+		<input type = "text" value = "your phone number" id = "phone">
+		<p id = "text"></p>
+		<script type="text/javascript" src = "EventUtil.js"></script>
+		<script type="text/javascript">
+			var phone = document.getElementById('phone');
+			EventUtil.addHandler(phone,"focus",function(){
+				if(phone.value == 'your phone number'){
+					phone.value = "";
+				}
+			})
+			EventUtil.addHandler(phone,"keyup",function(){
+				ajax(parseInt(phone.value));
+			})
+
+			var xhr;
+			function createXHR(){
+				if(window.XMLHttpRequest){
+					xhr = new XMLHttpRequest();
+				}
+				else{
+					xhr = new ActiveXObject("Microsoft.XMLHTTP");
+				}
+			}
+
+			function ajax(value){
+				createXHR();
+
+				xhr.onreadystatechange = function(){
+					if(xhr.readyState == 4){
+						if(xhr.status == 200){
+							successhandle(xhr.responseText);
+							
+						}
+						else if(xhr.status == 404 || 500){
+							alert("error");
+						}
+					}
+				}
+				
+				xhr.open("GET","valiadate.php?value="+value);
+				xhr.send(null);
+			}
+
+			function successhandle(msg){
+				var message,color;
+				var text = document.getElementById('text');
+				if(msg == "error"){
+					if(text.hasChildNodes()){
+						text.removeChild(text.firstChild);
+					}
+					message = "You have entered an ivalid date";
+					text.style.color = "red";
+					text.appendChild(document.createTextNode(message));
+				}
+				else if(msg == "success"){
+					if(text.hasChildNodes()){
+						text.removeChild(text.firstChild);
+					}
+					message = "You have entered an valid date";
+					text.style.color = "black";
+					text.appendChild(document.createTextNode(message));
+				}
+				else if(msg == "nimei"){
+					alert("nimei ");
+				}
+			}
+		</script>
+		
+		
+	</body>
+</html>
